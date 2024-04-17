@@ -1,13 +1,11 @@
-
-import { Browser, Builder, By, Key, until, WebElement } from 'selenium-webdriver';
+import { Builder, By, until } from 'selenium-webdriver';
 import 'chromedriver';
-import { describe } from 'node:test';
 
 describe('SauceDemo Tests', () => {
-  let driver: Browser;
+  let driver: any;
 
   beforeEach(async () => {
-    driver = await new Builder().forBrowser('opera').build();
+    driver = await new Builder().forBrowser('chrome').build();
   });
 
   afterEach(async () => {
@@ -35,19 +33,16 @@ describe('SauceDemo Tests', () => {
 
   it('should add item to cart', async () => {
     await driver.get('https://www.saucedemo.com/inventory.html');
-    const addItemButton = await driver.findElement(By.css('.btn_primary'));
-    await addItemButton.click();
+    await driver.findElement(By.css('.btn_primary')).click();
     const cartBadge = await driver.findElement(By.className('shopping_cart_badge')).getText();
     expect(cartBadge).toEqual('1');
   });
 
   it('should remove item from cart', async () => {
     await driver.get('https://www.saucedemo.com/inventory.html');
-    const addItemButton = await driver.findElement(By.css('.btn_primary'));
-    await addItemButton.click();
-    await addItemButton.click();
-    const removeItemButton = await driver.findElement(By.css('.btn_secondary'));
-    await removeItemButton.click();
+    await driver.findElement(By.css('.btn_primary')).click();
+    await driver.findElement(By.css('.btn_primary')).click();
+    await driver.findElement(By.css('.btn_secondary')).click();
     const cartBadge = await driver.findElement(By.className('shopping_cart_badge')).getText();
     expect(cartBadge).toEqual('1');
   });

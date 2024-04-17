@@ -7,7 +7,7 @@ describe('SauceDemo Tests', () => {
   let driver: Browser;
 
   beforeEach(async () => {
-    driver = await new Builder().forBrowser('chrome').build();
+    driver = await new Builder().forBrowser('opera').build();
   });
 
   afterEach(async () => {

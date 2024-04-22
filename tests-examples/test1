@@ -1,0 +1,54 @@
+import { chromium, Browser, Page } from 'playwright';
+
+describe('Saucedemo Tests', () => {
+  let browser: Browser;
+  let page: Page;
+
+  beforeAll(async () => {
+    browser = await chromium.launch();
+  });
+
+  afterAll(async () => {
+    await browser.close();
+  });
+
+  beforeEach(async () => {
+    page = await browser.newPage();
+    await page.goto('https://www.saucedemo.com/');
+  });
+
+  afterEach(async () => {
+    await page.close();
+  });
+
+  it('should login successfully with valid credentials', async () => {
+    await page.fill('#user-name', 'standard_user');
+    await page.fill('#password', 'secret_sauce');
+    await page.click('#login-button');
+    await page.waitForNavigation();
+    
+    expect(page.url()).toContain('/inventory.html');
+  });
+
+  it('should display error message with invalid credentials', async () => {
+    await page.fill('#user-name', 'invalid_user');
+    await page.fill('#password', 'invalid_password');
+    await page.click('#login-button');
+
+    expect(await page.isVisible('.error-message')).toBeTruthy();
+  });
+
+  it('should add item to cart successfully', async () => {
+    await page.fill('#user-name', 'standard_user');
+    await page.fill('#password', 'secret_sauce');
+    await page.click('#login-button');
+    await page.waitForNavigation();
+
+    await page.click('text=Add to cart');
+    await page.waitForSelector('.shopping_cart_badge');
+
+    expect(await page.innerText('.shopping_cart_badge')).toBe('1');
+  });
+
+  
+});

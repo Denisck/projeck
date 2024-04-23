@@ -1,38 +1,50 @@
 import { test, expect } from '@playwright/test';
 
-test.describe('Saucedemo Inventory Page Tests', () => {
-  test.beforeEach(async ({ page }) => {
-    await page.goto('https://www.saucedemo.com/inventory.html');
-  });
+test('Automatic Login and Inventory Page Tests', async ({ page }) => {
 
-  test('Should display products on inventory page', async ({ page }) => {
-    const productList = await page.$$('.inventory_item');
-    expect(productList.length).toBeGreaterThan(0);
-  });
+    await page.goto('https://www.saucedemo.com');
+    await page.fill('#user-name', 'visual_user');
+    await page.fill('#password', 'secret_sauce');
+    await page.click('#login-button');
+    await page.waitForNavigation();
+    expect(page.url()).toContain('/inventory.html');
 
-  test('Should be able to add product to cart', async ({ page }) => {
-    await page.click('.btn_primary');
-    const cartBadge = await page.$('.shopping_cart_badge');
-    if (cartBadge !== null) {
-      expect(await cartBadge.textContent()).toBe('1');
-    } else {
-      console.error('Nie można znaleźć elementu koszyka');
-    }
-  });
 
-  test('Should be able to remove product from cart', async ({ page }) => {
-    await page.click('.btn_primary');
-    await page.click('.btn_secondary');
-    const cartBadge = await page.$('.shopping_cart_badge');
-    if (cartBadge !== null) {
-      expect(await cartBadge.textContent()).toBe('0');
-    } else {
-      console.error('Nie można znaleźć elementu koszyka');
-    }
-  });
+    test.describe('Saucedemo Inventory Page Tests', () => {
+        test.beforeEach(async ({ page }) => {
+            await page.goto('https://www.saucedemo.com/inventory.html');
+        });
 
-  test('Should navigate to product details page', async ({ page }) => {
-    await page.click('.inventory_item:nth-child(1) a');
-    expect(page.url()).toContain('/inventory-item.html');
-  });
+        test('Should display products on inventory page', async ({ page }) => {
+            await page.waitForSelector('.inventory_item');
+            const productList = await page.$$('.inventory_item');
+            expect(productList.length).toBeGreaterThan(0);
+        });
+
+        test('Should be able to add product to cart', async ({ page }) => {
+            await page.click('.btn_primary');
+            const cartBadge = await page.$('.shopping_cart_badge');
+            if (cartBadge !== null) {
+                expect(await cartBadge.textContent()).toBe('1');
+            } else {
+                console.error('Nie można znaleźć elementu koszyka');
+            }
+        });
+
+        test('Should be able to remove product from cart', async ({ page }) => {
+            await page.click('.btn_primary');
+            await page.click('.btn_secondary');
+            const cartBadge = await page.$('.shopping_cart_badge');
+            if (cartBadge !== null) {
+                expect(await cartBadge.textContent()).toBe('0');
+            } else {
+                console.error('Nie można znaleźć elementu koszyka');
+            }
+        });
+
+        test('Should navigate to product details page', async ({ page }) => {
+            await page.click('.inventory_item:nth-child(1) a');
+            expect(page.url()).toContain('/inventory-item.html');
+        });
+    });
 });
